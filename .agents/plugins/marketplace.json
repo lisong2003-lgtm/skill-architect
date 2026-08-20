@@ -1,0 +1,20 @@
+{
+  "name": "skill-architect",
+  "interface": {
+    "displayName": "Skill Architect"
+  },
+  "plugins": [
+    {
+      "name": "skill-architect",
+      "source": {
+        "source": "local",
+        "path": "./plugins/skill-architect"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

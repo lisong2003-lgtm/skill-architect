@@ -1,0 +1,33 @@
+{
+  "name": "skill-architect",
+  "version": "0.2.0",
+  "description": "SKILL.md 架构重构、长对话快照迁移和跨 Agent 传输。",
+  "author": {
+    "name": "lis"
+  },
+  "license": "CC-BY-NC-SA-4.0",
+  "keywords": [
+    "skill-architect",
+    "SKILL.md",
+    "token",
+    "conversation-snapshot",
+    "skill-pack"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Skill Architect",
+    "shortDescription": "SKILL.md 架构重构、长对话快照迁移和跨 Agent 传输",
+    "longDescription": "把臃肿的 SKILL.md 重构为入口 + 路由 + 按需读取；把长对话沉淀为快照和可复用技能包；通过 Skill 包跨 Agent、跨用户迁移。",
+    "developerName": "lis",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "帮我瘦身这个 SKILL.md",
+      "帮我总结这个长对话",
+      "快速导入已总结长对话"
+    ]
+  }
+}

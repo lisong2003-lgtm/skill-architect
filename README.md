@@ -2,6 +2,8 @@
 
 Skill Architect 是一个可复用、可发布的 Codex Skill，用于把过大的 `SKILL.md` 从“整本常驻”改成“目录 + 路由索引 + 按需读取技能包”。它覆盖审计、备份、抽取、路由、验证和回滚，定位是架构级瘦身，不是简单压缩文字。
 
+GitHub：https://github.com/lisong2003-lgtm/skill-architect
+
 ## 发布结构
 
 - `public/skill-architect-public/`：公开发布版 Skill

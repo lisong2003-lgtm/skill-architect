@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+*.pyc
+conversation-output/
+conversation-transcript.md
+public/*-0.1.0.zip

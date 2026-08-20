@@ -6,6 +6,8 @@ GitHub：https://github.com/lisong2003-lgtm/skill-architect
 
 反馈与 Issue：https://github.com/lisong2003-lgtm/skill-architect/issues
 
+WorkBuddy 安装：见 `docs/WorkBuddy安装使用.md`
+
 ## 发布结构
 
 - `public/skill-architect-public/`：公开发布版 Skill

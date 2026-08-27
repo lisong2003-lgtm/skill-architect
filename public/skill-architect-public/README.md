@@ -113,7 +113,7 @@ python3 scripts/check_privacy.py --root .
 
 ## 版本信息
 
-- 版本：0.2.0
+- 版本：0.2.5
 - 许可证：CC BY-NC-SA 4.0
 - 变更记录：见 `CHANGELOG.md`
 

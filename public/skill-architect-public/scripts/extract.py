@@ -5,6 +5,8 @@ import argparse
 import json
 from pathlib import Path
 
+from path_util import as_native_path
+
 
 def find_block(lines, start_marker, end_marker):
     start = None
@@ -29,13 +31,13 @@ def main():
     parser.add_argument("--config", default="")
     args = parser.parse_args()
 
-    skill = Path(args.skill)
+    skill = Path(as_native_path(args.skill))
     lines = skill.read_text(encoding="utf-8").splitlines(keepends=True)
     extracted_lines = 0
     outputs = 0
 
     if args.config:
-        config = json.loads(Path(args.config).read_text(encoding="utf-8"))
+        config = json.loads(Path(as_native_path(args.config)).read_text(encoding="utf-8"))
         for item in config.get("sections", []):
             start, end = find_block(lines, item["start"], item["end"])
             extracted_lines += end - start
@@ -43,7 +45,7 @@ def main():
             replace_marker = item.get("replace_marker", args.replace_marker).replace("\\n", "\n")
             marker = replace_marker + "\n" if not replace_marker.endswith("\n") else replace_marker
             lines[start:end] = [marker]
-            output = Path(item["output"])
+            output = Path(as_native_path(item["output"]))
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_text(extracted_text, encoding="utf-8")
             outputs += 1
@@ -58,7 +60,7 @@ def main():
             extracted_text = "".join(lines[start:end])
             marker = replace_marker + "\n" if not replace_marker.endswith("\n") else replace_marker
             lines[start:end] = [marker]
-        output = Path(args.output)
+        output = Path(as_native_path(args.output))
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(extracted_text, encoding="utf-8")
         outputs = 1

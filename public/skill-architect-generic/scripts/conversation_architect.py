@@ -8,6 +8,8 @@ import os
 import re
 from pathlib import Path
 
+from path_util import as_native_path
+
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATES = ROOT / "templates"
@@ -129,16 +131,16 @@ def main():
     parser.add_argument("--scope", choices=["whole-dialog", "topic"], default="whole-dialog")
     args = parser.parse_args()
 
-    transcript = Path(args.transcript)
+    transcript = Path(as_native_path(args.transcript))
     if not transcript.exists():
         raise SystemExit("TRANSCRIPT_NOT_FOUND")
 
-    output_dir = Path(args.output_dir)
+    output_dir = Path(as_native_path(args.output_dir))
     output_dir.mkdir(parents=True, exist_ok=True)
 
     config = {}
     if args.config:
-        config = json.loads(Path(args.config).read_text(encoding="utf-8"))
+        config = json.loads(Path(as_native_path(args.config)).read_text(encoding="utf-8"))
 
     skill_name = args.skill_name or config.get("skill_name") or transcript.stem
     text = transcript.read_text(encoding="utf-8", errors="ignore")
@@ -169,7 +171,7 @@ def main():
         "SCOPE": "整个当前对话框" if args.scope == "whole-dialog" else "指定主题",
         "TOPICS": "、".join(item["name"] if isinstance(item, dict) else str(item) for item in topics),
         "LAST_ANSWER": last_answer or "- 无",
-        "CANDIDATES": "\n".join(f"- {candidate}" for candidate in candidates) or "- 无",
+        "CANDIDATES": "\n".join(f"- [自动候选，需复核] {candidate}" for candidate in candidates) or "- 无",
     }
     snapshot = output_dir / "conversation-snapshot.md"
     snapshot.write_text(
@@ -182,7 +184,7 @@ def main():
         topic = topic_item["name"] if isinstance(topic_item, dict) else str(topic_item)
         slug = slugify(topic)
         if isinstance(topic_item, dict) and topic_item.get("output"):
-            target = Path(topic_item["output"])
+            target = Path(as_native_path(topic_item["output"]))
             if not target.is_absolute():
                 target = output_dir / target
         else:

@@ -1,8 +1,14 @@
 ---
 name: skill-architect
-version: 0.2.0
+slug: skill-architect
+displayName: 技能架构师 / Skill Architect
+version: 0.2.5
 author: lis
-description: Audit and architecturally refactor a large SKILL.md by extracting bulky sections into skill packs, generating a routing index, validating tests, and enabling rollback. Also turns long conversations into snapshots and reusable skill packs, and can continue a new chat from the latest conversation snapshot. Use when asked to slim, externalize, token-optimize, restructure a SKILL.md, summarize a long conversation, or continue from a saved conversation snapshot; do not use for simple wording compression.
+license: CC-BY-NC-SA-4.0
+homepage: https://github.com/lisong2003-lgtm/skill-architect
+description: |
+  用架构重构解决 SKILL.md 臃肿和长对话 Token 膨胀：把每次全量加载改为“入口 + 路由 + 按需读取”，把被锁在对话里的积累迁移为可传输、可复用的 Skill 包。
+  Skill Architect solves bloated SKILL.md files and long-chat token costs by replacing full-context loading with entry, routing, and on-demand skill packs.
 trigger:
   - 帮我瘦身这个 SKILL.md
   - 帮我总结这个长对话
@@ -34,6 +40,8 @@ trigger:
 ## 通用模式
 
 适用于任意 `SKILL.md`，不限于本项目。用户可以指定要外移的章节、模块和输出位置。
+
+先让 Ponytail 审查“该功能/文档/脚本是否该存在”，再对本技能确认必须保留的大块内容做外移。Ponytail 管要不要，本技能管放哪里。
 
 先用 JSON 配置描述外移计划：
 

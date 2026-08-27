@@ -4,6 +4,8 @@
 import argparse
 from pathlib import Path
 
+from path_util import as_native_path
+
 
 def last_answer_text(snapshot):
     text = snapshot.read_text(encoding="utf-8", errors="ignore")
@@ -17,9 +19,7 @@ def last_answer_text(snapshot):
 def candidates(search_base):
     roots = [Path.cwd()]
     if search_base:
-        roots.append(Path(search_base).resolve())
-    else:
-        roots.append(Path.home() / "Documents" / "Codex")
+        roots.append(Path(as_native_path(search_base)).resolve())
 
     found = []
     for root in roots:

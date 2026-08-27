@@ -134,7 +134,7 @@ python3 scripts/import_conversation_handoff.py --source skill-package.zip --topi
 
 ## 版本信息
 
-- 当前版本：0.2.0。
+- 当前版本：0.2.3。
 - 许可证：CC BY-NC-SA 4.0。
 - 使用说明见 `USAGE.md`。
 

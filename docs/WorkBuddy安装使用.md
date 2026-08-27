@@ -4,7 +4,7 @@
 
 WorkBuddy 使用通用 Skill 包，不要使用 Codex 插件包：
 
-- 通用版下载：https://github.com/lisong2003-lgtm/skill-architect/releases/download/v0.2.0/skill-architect-generic-0.2.0.zip
+- 通用版下载：https://github.com/lisong2003-lgtm/skill-architect/releases/download/v0.2.5/skill-architect-generic-0.2.5.zip
 
 ## 安装方法
 
@@ -13,12 +13,12 @@ WorkBuddy 使用通用 Skill 包，不要使用 Codex 插件包：
 1. 打开 WorkBuddy。
 2. 进入设置或技能管理页。
 3. 点击“Import Skill”或“导入技能”。
-4. 选择 `skill-architect-generic-0.2.0.zip`。
+4. 选择 `skill-architect-generic-0.2.5.zip`。
 5. 导入后重启 WorkBuddy 或新开对话。
 
 ### 方法二：复制到技能目录
 
-1. 解压 `skill-architect-generic-0.2.0.zip`。
+1. 解压 `skill-architect-generic-0.2.5.zip`。
 2. 将解压后的 `skill-architect-generic` 文件夹放入：
    - 项目级：`.codebuddy/skills/`
    - 用户级：`~/.workbuddy/skills/`（以 WorkBuddy 实际版本为准）

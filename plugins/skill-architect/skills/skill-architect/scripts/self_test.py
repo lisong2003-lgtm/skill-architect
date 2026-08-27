@@ -5,6 +5,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
@@ -173,6 +174,9 @@ def main():
         if "建议先做风险清单" not in snapshot_text:
             raise SystemExit("MISSING last assistant answer in snapshot")
 
+        private = conversation_out / "private.txt"
+        private.write_text("secret", encoding="utf-8")
+
         run(
             str(SCRIPTS / "find_conversation_handoff.py"),
             "--search-base",
@@ -196,6 +200,12 @@ def main():
             str(handoff_zip),
             cwd=root,
         )
+        with zipfile.ZipFile(handoff_zip) as zf:
+            exported_names = set(zf.namelist())
+        if "private.txt" in exported_names:
+            raise SystemExit("EXPORT_INCLUDED_PRIVATE_FILE")
+        if "conversation-snapshot.md" not in exported_names or "routing-index.md" not in exported_names:
+            raise SystemExit("EXPORT_MISSING_CORE_FILE")
         run(
             str(SCRIPTS / "import_conversation_handoff.py"),
             "--source",
@@ -206,6 +216,28 @@ def main():
             "对话",
             cwd=root,
         )
+
+        evil_zip = root / "evil.zip"
+        with zipfile.ZipFile(evil_zip, "w") as zf:
+            zf.writestr("../escaped.txt", "bad")
+        escaped = root / "escaped.txt"
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPTS / "import_conversation_handoff.py"),
+                "--source",
+                str(evil_zip),
+                "--dest",
+                str(root / "unsafe-import"),
+            ],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0:
+            raise SystemExit("UNSAFE_ZIP_ACCEPTED")
+        if escaped.exists():
+            raise SystemExit("ZIP_SLIP_WRITE_OUTSIDE_DEST")
 
         topic_transcript = root / "topic-only.md"
         topic_transcript.write_text(

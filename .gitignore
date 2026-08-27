@@ -4,3 +4,5 @@ __pycache__/
 conversation-output/
 conversation-transcript.md
 public/*-0.1.0.zip
+public/*-0.2.*.zip
+public/SHA256SUMS-*.txt

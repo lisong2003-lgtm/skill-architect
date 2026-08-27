@@ -11,9 +11,9 @@ WorkBuddy 安装：见 `docs/WorkBuddy安装使用.md`
 ## 发布结构
 
 - `public/skill-architect-public/`：公开发布版 Skill
-- `public/skill-architect-public-0.2.0.zip`：发布压缩包
+- `public/skill-architect-public-0.2.5.zip`：发布压缩包
 - `public/skill-architect-generic/`：跨 Agent 通用版 Skill
-- `public/skill-architect-generic-0.2.0.zip`：跨 Agent 通用版压缩包
+- `public/skill-architect-generic-0.2.5.zip`：跨 Agent 通用版压缩包
 - `docs/产品说明.md`：面向使用者的产品说明
 - `docs/使用说明.md`：面向使用者的操作说明
 - `docs/平台发布材料.md`：SkillHub、扣子、GitHub 发布材料

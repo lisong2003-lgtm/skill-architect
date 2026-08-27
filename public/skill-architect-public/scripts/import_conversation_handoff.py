@@ -6,6 +6,17 @@ import zipfile
 from pathlib import Path
 
 from find_conversation_handoff import candidates, last_answer_text
+from path_util import as_native_path
+
+def safe_extract(source, dest):
+    dest = dest.resolve()
+    with zipfile.ZipFile(source) as zf:
+        for member in zf.infolist():
+            target = (dest / member.filename).resolve()
+            if not target.is_relative_to(dest):
+                raise SystemExit("UNSAFE_ZIP_PATH")
+        zf.extractall(dest)
+
 
 
 def print_import(snapshot, topic):
@@ -39,14 +50,13 @@ def main():
     args = parser.parse_args()
 
     if args.source:
-        source = Path(args.source)
+        source = Path(as_native_path(args.source))
         if not source.exists():
             raise SystemExit("SOURCE_NOT_FOUND")
         if source.suffix.lower() == ".zip":
-            dest = Path(args.dest)
+            dest = Path(as_native_path(args.dest))
             dest.mkdir(parents=True, exist_ok=True)
-            with zipfile.ZipFile(source) as zf:
-                zf.extractall(dest)
+            safe_extract(source, dest)
             snapshots = sorted(dest.rglob("conversation-snapshot.md"))
             if not snapshots:
                 raise SystemExit("SOURCE_HAS_NO_SNAPSHOT")
@@ -58,7 +68,7 @@ def main():
         print_import(snapshot, args.topic)
         return
 
-    latest = candidates(args.search_base)
+    latest = candidates(as_native_path(args.search_base))
     if not latest:
         print("CONVERSATION_HANDOFF_NOT_FOUND")
         raise SystemExit(1)

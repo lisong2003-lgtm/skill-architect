@@ -1,14 +1,8 @@
 ---
 name: skill-architect
-slug: skill-architect
-displayName: 技能架构师 / Skill Architect
-version: 0.2.5
+version: 0.3.3
 author: lis
-license: CC-BY-NC-SA-4.0
-homepage: https://github.com/lisong2003-lgtm/skill-architect
-description: |
-  用架构重构解决 SKILL.md 臃肿和长对话 Token 膨胀：把每次全量加载改为“入口 + 路由 + 按需读取”，把被锁在对话里的积累迁移为可传输、可复用的 Skill 包。
-  Skill Architect solves bloated SKILL.md files and long-chat token costs by replacing full-context loading with entry, routing, and on-demand skill packs.
+description: Audit and architecturally refactor a large SKILL.md by extracting bulky sections into skill packs, generating a routing index, validating tests, and enabling rollback. Also turns long conversations into snapshots and reusable skill packs, and can continue a new chat from the latest conversation snapshot. Use when asked to slim, externalize, token-optimize, restructure a SKILL.md, summarize a long conversation, or continue from a saved conversation snapshot; do not use for simple wording compression.
 trigger:
   - 帮我瘦身这个 SKILL.md
   - 帮我总结这个长对话

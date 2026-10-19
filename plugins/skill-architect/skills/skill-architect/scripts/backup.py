@@ -7,8 +7,6 @@ import hashlib
 import shutil
 from pathlib import Path
 
-from path_util import as_native_path
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -16,8 +14,8 @@ def main():
     parser.add_argument("--backup", required=True)
     args = parser.parse_args()
 
-    skill = Path(as_native_path(args.skill))
-    backup_arg = Path(as_native_path(args.backup))
+    skill = Path(args.skill)
+    backup_arg = Path(args.backup)
     if backup_arg.suffix:
         backup = backup_arg
     else:

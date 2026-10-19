@@ -8,8 +8,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-from path_util import as_native_path
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -21,9 +19,9 @@ def main():
     args = parser.parse_args()
 
     ok = True
-    skill = Path(as_native_path(args.skill))
-    index = Path(as_native_path(args.index))
-    root = Path(as_native_path(args.root))
+    skill = Path(args.skill)
+    index = Path(args.index)
+    root = Path(args.root)
     if not skill.exists():
         print(f"MISSING skill {skill}")
         ok = False
@@ -43,7 +41,7 @@ def main():
             print(f"indexed_paths={len(paths)}")
 
     if args.test_prompts:
-        prompts_path = Path(as_native_path(args.test_prompts))
+        prompts_path = Path(args.test_prompts)
         if prompts_path.exists():
             data = json.loads(prompts_path.read_text(encoding="utf-8"))
             cases = data.get("test_cases", data if isinstance(data, list) else [])

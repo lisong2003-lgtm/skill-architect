@@ -104,6 +104,18 @@ python3 scripts/import_conversation_handoff.py --source skill-architect-handoff.
 - `templates/`：路由索引、技能包和对话归纳模板
 - `examples/`：示例输出
 
+## 回归验证
+
+已在 3 个 >106KB 真实大 SKILL（本地脱敏样本 A/B/C）上各完成 3 轮「拆包→回滚→再发布」，共 9 轮，全部 PASS：
+
+| 样本（脱敏） | 大小（字节/行） | 轮数 | 回滚后 SHA-256 与原文一致 | 再发布抽取与首轮一致 |
+| --- | ---: | ---: | --- | --- |
+| 本地项目快照A | 182,325 / 2,034 | 3 | PASS ×3 | PASS ×3 |
+| 本地现成技能B | 106,432 / 1,466 | 3 | PASS ×3 | PASS ×3 |
+| 本地现成技能C | 142,557 / 3,457 | 3 | PASS ×3 | PASS ×3 |
+
+回复退出时，回滚后文件 SHA-256 与原文完全一致；再次抽取的输出与首轮逐字一致。
+
 ## 自测
 
 ```bash
@@ -113,7 +125,7 @@ python3 scripts/check_privacy.py --root .
 
 ## 版本信息
 
-- 版本：0.2.5
+- 版本：0.3.3
 - 许可证：CC BY-NC-SA 4.0
 - 变更记录：见 `CHANGELOG.md`
 

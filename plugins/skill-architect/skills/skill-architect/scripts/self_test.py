@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Self-contained smoke test for skill-architect scripts."""
 
+import hashlib
 import json
 import subprocess
 import sys
@@ -261,6 +262,63 @@ def main():
         )
         if result.returncode == 0:
             raise SystemExit("EXPECTED FULL TRANSCRIPT SCOPE FAILURE")
+
+        # 0.3.3 新增：拆包→回滚→再发布 行为不变断言
+        inv = root / "invariant"
+        inv.mkdir(parents=True)
+        inv_skill = inv / "SKILL.md"
+        inv_skill.write_text(
+            "# Inv\n\n## Core\n- keep\n\n## Alpha\n- aa\n- bb\n\n## Beta\n- bb\n\n## Tail\n- t\n",
+            encoding="utf-8",
+        )
+        inv_orig_hash = hashlib.sha256(inv_skill.read_bytes()).hexdigest()
+        inv_backup = inv / "backup"
+        run(
+            str(SCRIPTS / "backup.py"),
+            "--skill",
+            str(inv_skill),
+            "--backup",
+            str(inv_backup),
+            cwd=inv,
+        )
+        inv_out1 = inv / "out1.md"
+        run(
+            str(SCRIPTS / "extract.py"),
+            "--skill",
+            str(inv_skill),
+            "--markers",
+            "## Alpha|## Beta",
+            "--output",
+            str(inv_out1),
+            "--replace-marker",
+            "## 已外移说明\n\n内容已外移。",
+            cwd=inv,
+        )
+        run(
+            str(SCRIPTS / "rollback.py"),
+            "--skill",
+            str(inv_skill),
+            "--backup",
+            str(inv_backup),
+            cwd=inv,
+        )
+        if hashlib.sha256(inv_skill.read_bytes()).hexdigest() != inv_orig_hash:
+            raise SystemExit("INVARIANT_ROLLBACK_SHA_MISMATCH")
+        inv_out2 = inv / "out2.md"
+        run(
+            str(SCRIPTS / "extract.py"),
+            "--skill",
+            str(inv_skill),
+            "--markers",
+            "## Alpha|## Beta",
+            "--output",
+            str(inv_out2),
+            "--replace-marker",
+            "## 已外移说明\n\n内容已外移。",
+            cwd=inv,
+        )
+        if inv_out1.read_text(encoding="utf-8") != inv_out2.read_text(encoding="utf-8"):
+            raise SystemExit("INVARIANT_RE_EXTRACT_DIFF")
 
         run(
             str(SCRIPTS / "check_privacy.py"),

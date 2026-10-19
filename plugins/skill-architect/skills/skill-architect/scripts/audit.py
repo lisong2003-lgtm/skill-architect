@@ -2,11 +2,8 @@
 """Audit a SKILL.md and report large sections that may be externalized."""
 
 import argparse
-import os
 import re
 from pathlib import Path
-
-from path_util import as_native_path
 
 
 def section_stats(text):
@@ -39,21 +36,15 @@ def main():
     parser.add_argument("--output", default="")
     args = parser.parse_args()
 
-    path = Path(as_native_path(args.skill))
+    path = Path(args.skill)
     text = path.read_text(encoding="utf-8", errors="ignore")
     lines, sections = section_stats(text)
     candidates = [s for s in sections if s["lines"] >= args.threshold]
-    try:
-        skill_display = os.path.relpath(path, Path.cwd())
-        if skill_display.startswith(".."):
-            skill_display = path.name
-    except ValueError:
-        skill_display = path.name
 
     report = [
         f"# Skill Architect Audit",
         "",
-        f"- SKILL: {skill_display}",
+        f"- SKILL: {path}",
         f"- Total lines: {len(lines)}",
         f"- Sections: {len(sections)}",
         f"- Candidate externalizable sections (>= {args.threshold} lines): {len(candidates)}",
@@ -70,7 +61,7 @@ def main():
     report_text = "\n".join(report) + "\n"
 
     if args.output:
-        Path(as_native_path(args.output)).write_text(report_text, encoding="utf-8")
+        Path(args.output).write_text(report_text, encoding="utf-8")
     print(report_text)
 
 

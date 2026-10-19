@@ -5,8 +5,6 @@ import argparse
 import math
 from pathlib import Path
 
-from path_util import as_native_path
-
 
 def stats(path):
     text = path.read_text(encoding="utf-8", errors="ignore")
@@ -26,8 +24,8 @@ def main():
     if args.tokens_per_char <= 0:
         raise SystemExit("--tokens-per-char must be > 0")
 
-    original_path = Path(as_native_path(args.original))
-    slimmed_path = Path(as_native_path(args.slimmed))
+    original_path = Path(args.original)
+    slimmed_path = Path(args.slimmed)
     if not original_path.exists() or not slimmed_path.exists():
         raise SystemExit("ORIGINAL_OR_SLIMMED_NOT_FOUND")
 

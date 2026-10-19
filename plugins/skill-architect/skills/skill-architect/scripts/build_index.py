@@ -6,8 +6,6 @@ import os
 import re
 from pathlib import Path
 
-from path_util import as_native_path
-
 
 def first_heading(path):
     for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
@@ -31,9 +29,9 @@ def main():
     parser.add_argument("--root", default=str(Path.cwd()))
     args = parser.parse_args()
 
-    pack_dir = Path(as_native_path(args.pack_dir))
-    index = Path(as_native_path(args.index))
-    root = Path(as_native_path(args.root))
+    pack_dir = Path(args.pack_dir)
+    index = Path(args.index)
+    root = Path(args.root)
     packs = sorted(pack_dir.rglob("SKILL.md"))
     lines = [
         "# Skill Routing Index",

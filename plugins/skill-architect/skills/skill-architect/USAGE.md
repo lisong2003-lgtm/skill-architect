@@ -144,5 +144,5 @@ python3 scripts/check_privacy.py --root .
 
 ## 版本信息
 
-- 当前版本：0.2.0。
+- 当前版本：0.3.3。
 - 许可证：CC BY-NC-SA 4.0。

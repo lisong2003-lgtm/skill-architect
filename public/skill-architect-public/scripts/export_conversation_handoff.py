@@ -6,8 +6,6 @@ import datetime
 import zipfile
 from pathlib import Path
 
-from path_util import as_native_path
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -15,7 +13,7 @@ def main():
     parser.add_argument("--output", default="")
     args = parser.parse_args()
 
-    snapshot_dir = Path(as_native_path(args.snapshot_dir))
+    snapshot_dir = Path(args.snapshot_dir)
     snapshot = snapshot_dir / "conversation-snapshot.md"
     index = snapshot_dir / "routing-index.md"
     if not snapshot.exists():
@@ -24,7 +22,7 @@ def main():
         raise SystemExit("ROUTING_INDEX_NOT_FOUND")
 
     if args.output:
-        output = Path(as_native_path(args.output))
+        output = Path(args.output)
     else:
         stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         output = Path(f"skill-architect-handoff-{stamp}.zip")

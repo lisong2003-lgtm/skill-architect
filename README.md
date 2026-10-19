@@ -1,88 +1,134 @@
-# Skill Architect 技能架构师
+# Skill Architect（公开版）
 
-> 📦 **SkillHub 安装**：`skillhub install skill-architect`　|　仓库：[lisong2003-lgtm/skill-architect](https://github.com/lisong2003-lgtm/skill-architect)
+把过大的 `SKILL.md` 从“整本常驻”改成“目录 + 路由索引 + 按需读取技能包”的结构化瘦身技能。
 
+## 特点
 
-Skill Architect 是一个可复用、可发布的 Codex Skill，用于把过大的 `SKILL.md` 从“整本常驻”改成“目录 + 路由索引 + 按需读取技能包”。它覆盖审计、备份、抽取、路由、验证和回滚，定位是架构级瘦身，不是简单压缩文字。
+- 架构级外移，不只是压缩文字
+- 审计大块章节，给出可外移建议
+- 修改前完整备份，支持校验值恢复
+- 自动抽取章节并替换为短说明
+- 自动生成技能包路由索引
+- 路径、结构、测试集验证
+- 长对话归纳为快照和可复用技能包
+- 无第三方依赖，Python 3.9+ 即可运行
 
-GitHub：https://github.com/lisong2003-lgtm/skill-architect
+## 工作流
 
-反馈与 Issue：https://github.com/lisong2003-lgtm/skill-architect/issues
+1. 审计：`scripts/audit.py --skill SKILL.md`
+2. 用户确认要外移的章节
+3. 备份：`scripts/backup.py --skill SKILL.md --backup backup/`
+4. 抽取：`scripts/extract.py --skill SKILL.md --markers "start|end" --output extracted.md`
+5. 路由：`scripts/build_index.py --pack-dir packs/ --index index.md --root .`
+6. 验证：`scripts/validate.py --skill SKILL.md --index index.md --root .`
+7. 回滚：`scripts/rollback.py --skill SKILL.md --backup backup/SKILL.md`
 
-WorkBuddy 安装：见 `docs/WorkBuddy安装使用.md`
+## 长对话归纳
 
-## 发布结构
-
-- `public/skill-architect-public/`：公开发布版 Skill
-- `public/skill-architect-public-0.2.5.zip`：发布压缩包
-- `public/skill-architect-generic/`：跨 Agent 通用版 Skill
-- `public/skill-architect-generic-0.2.5.zip`：跨 Agent 通用版压缩包
-- `docs/产品说明.md`：面向使用者的产品说明
-- `docs/使用说明.md`：面向使用者的操作说明
-- `docs/平台发布材料.md`：SkillHub、扣子、GitHub 发布材料
-- `docs/制作过程.md`：制作该 Skill 的对话脉络和关键决策
-- `docs/发布清单.md`：发布前检查与核对结果
-
-通用版不绑定 Codex，任何能读取 Markdown 并运行 Python 3.9+ 脚本的 Agent 都可以接入；核心工作流与公开发布版一致，并额外提供隐私检查和 token 估算工具。
-
-> 重要提示：通用版已做基础版权声明和去隐私处理，发布前请阅读 `public/skill-architect-generic/NOTICE.md` 和 `PRIVACY.md`，并运行隐私检查。
-
-## 省 Token 估算
-
-脱敏案例：
-
-- 第一轮：2034 → 836 行，约省 17,300-23,100 tokens。
-- 第二轮：836 → 586 行，约省 8,400-11,200 tokens。
-- 累计两轮：2034 → 586 行，约省 25,700-34,300 tokens。
-
-实际节省因模型和加载方式而异，可按自己的文件运行：
+把长对话导出为 Markdown 或文本后，运行：
 
 ```bash
-python3 public/skill-architect-generic/scripts/estimate_tokens.py --original 原始SKILL.md --slimmed 瘦身后的SKILL.md
+python3 scripts/conversation_architect.py --transcript 对话文件.md --output-dir conversation-output --skill-name project-notes
 ```
 
-第二轮脱敏案例见 `public/skill-architect-generic/CASE_STUDIES.md`。
+生成内容：
 
-## 快速使用
+- `conversation-snapshot.md`：核心结论、决策、待办和边界待 Agent 补充
+- `skills/*/SKILL.md`：按话题生成的技能包骨架
+- `routing-index.md`：后续按需读取的索引
 
-安装或直接使用公开包中的脚本：
+简化触发：
 
-```bash
-python3 public/skill-architect-public/scripts/audit.py --skill SKILL.md
-python3 public/skill-architect-public/scripts/self_test.py
-```
+- 老对话：`帮我总结这个长对话`
+- 新对话：`继续讨论 <问题>`
 
-## 长对话续接
+默认输出目录为 `conversation-output/`。新对话中说“继续讨论 <问题>”时，Skill Architect 会先运行 `scripts/find_conversation_handoff.py` 自动查找最新快照和路由索引；找不到时再查找当前目录的 `conversation-output/`。
 
-本段对话快照位于 `conversation-output/`。新对话应说：
+完整对话 transcript 顶部必须声明 `conversation_scope: whole-dialog`；只总结某个主题时，才使用 `--scope topic`。脚本默认拒绝用主题片段冒充完整对话。
+
+该能力不删除或压缩当前对话框上下文，主要让新对话只引用快照和技能包。详细方法见 `references/长对话归纳最佳实践.md`。
+
+## 当前已开对话导入
+
+如果不想新开对话，而是在当前已开的对话框里迁移已总结的长对话：
 
 ```text
-继续讨论 <问题>。先读取 conversation-output/conversation-snapshot.md 和 conversation-output/routing-index.md，按需加载对应技能包，不要复制旧对话全文。
+把总结过的长对话导入当前对话，继续讨论 <问题>
 ```
 
-长对话归纳：
+Skill Architect 会运行 `scripts/import_conversation_handoff.py --topic <问题>`，读取最新快照、路由索引和匹配技能包，不复制旧对话完整历史。
+
+低消耗快速导入：直接说“快速导入已总结长对话”，Skill Architect 只运行导入脚本、展示最后一段回答并停止，不执行项目分析、路由优化或蒸馏。
+
+继续规则：先展示快照中的“老对话最后一段回答”，然后停止，由用户决定下一步；不自动执行老对话中的瘦身、修改、蒸馏等任务。
+
+触发优先级：本机某个高优先级 Skill 项目可能接管“继续老版综合思维讨论”；此时提醒用户显式说“用 skill-architect 导入已总结长对话”。其他项目或新对话中优先运行 `find_conversation_handoff.py`。
+
+## 跨用户传输
+
+发送方：
 
 ```bash
-python3 public/skill-architect-public/scripts/conversation_architect.py --transcript 对话文件.md --output-dir conversation-output --skill-name project-notes
+python3 scripts/export_conversation_handoff.py --snapshot-dir conversation-output --output skill-architect-handoff.zip
 ```
 
-新对话自动查找快照：
+接收方：
 
 ```bash
-python3 public/skill-architect-public/scripts/find_conversation_handoff.py
+python3 scripts/import_conversation_handoff.py --source skill-architect-handoff.zip --dest imported-conversation-output --topic <问题>
 ```
 
-当前已开对话导入：
+只传快照和技能包，不传完整对话。详细方法见 `references/跨用户传输最佳实践.md`。
+
+## 安装
+
+将本目录作为 Codex Skill 安装，或按目标平台的 Skill 格式打包。
+
+## 快速开始
+
+```text
+用 skill-architect 审计我的 SKILL.md，找出哪些大块内容适合外移。
+或：把当前长对话归纳成快照和技能包。
+```
+
+产品说明见 `PRODUCT.md`，使用说明见 `USAGE.md`。
+
+## 目录
+
+- `SKILL.md`：技能入口
+- `PRODUCT.md`：产品说明
+- `USAGE.md`：使用说明
+- `agents/openai.yaml`：UI 元信息
+- `scripts/`：审计、备份、抽取、路由、验证、回滚、自测、长对话归纳
+- `references/`：瘦身最佳实践、长对话归纳最佳实践
+- `templates/`：路由索引、技能包和对话归纳模板
+- `examples/`：示例输出
+
+## 回归验证
+
+已在 3 个 >106KB 真实大 SKILL（本地脱敏样本 A/B/C）上各完成 3 轮「拆包→回滚→再发布」，共 9 轮，全部 PASS：
+
+| 样本（脱敏） | 大小（字节/行） | 轮数 | 回滚后 SHA-256 与原文一致 | 再发布抽取与首轮一致 |
+| --- | ---: | ---: | --- | --- |
+| 本地项目快照A | 182,325 / 2,034 | 3 | PASS ×3 | PASS ×3 |
+| 本地现成技能B | 106,432 / 1,466 | 3 | PASS ×3 | PASS ×3 |
+| 本地现成技能C | 142,557 / 3,457 | 3 | PASS ×3 | PASS ×3 |
+
+回复退出时，回滚后文件 SHA-256 与原文完全一致；再次抽取的输出与首轮逐字一致。
+
+## 自测
 
 ```bash
-python3 public/skill-architect-public/scripts/import_conversation_handoff.py --topic <问题>
+python3 scripts/self_test.py
+python3 scripts/check_privacy.py --root .
 ```
 
-跨用户导出与导入：
+## 版本信息
 
-```bash
-python3 public/skill-architect-public/scripts/export_conversation_handoff.py --snapshot-dir conversation-output --output skill-architect-handoff.zip
-python3 public/skill-architect-public/scripts/import_conversation_handoff.py --source skill-architect-handoff.zip --topic <问题>
-```
+- 版本：0.3.3
+- 许可证：CC BY-NC-SA 4.0
+- 变更记录：见 `CHANGELOG.md`
 
-完整工作流和配置示例见 `docs/产品说明.md`、`docs/使用说明.md` 与 `public/skill-architect-public/SKILL.md`。
+## 授权
+
+CC BY-NC-SA 4.0。

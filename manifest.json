@@ -1,6 +1,6 @@
 {
   "name": "skill-architect",
-  "version": "0.2.1",
+  "version": "0.3.3",
   "description": "SKILL.md 架构重构、长对话快照迁移和跨 Agent 传输。",
   "author": "lis",
   "license": "CC-BY-NC-SA-4.0",

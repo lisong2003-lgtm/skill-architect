@@ -25,6 +25,7 @@ jobs:
       PYTHONIOENCODING: utf-8
       PYTHONUTF8: "1"
     steps:
+      - uses: actions/checkout@v4
       - name: self_test（自包含）
         run: python scripts/self_test.py
 

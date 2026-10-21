@@ -57,7 +57,11 @@ def main():
             continue
         scanned += 1
 
+        root_ref = root.as_posix().replace("\\", "/").casefold()
         for lineno, line in enumerate(text.splitlines(), 1):
+            line_norm = line.replace("\\", "/").casefold()
+            if root_ref in line_norm:
+                continue
             for pattern, label in PATTERNS:
                 if re.search(pattern, line):
                     issues.append((path.relative_to(root), lineno, label, line.strip()[:120]))

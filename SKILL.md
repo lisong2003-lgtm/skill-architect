@@ -1,6 +1,7 @@
 ---
 name: skill-architect
-version: 0.3.3
+version: 0.3.4
+platforms: [macos, windows, linux]
 author: lis
 description: Audit and architecturally refactor a large SKILL.md by extracting bulky sections into skill packs, generating a routing index, validating tests, and enabling rollback. Also turns long conversations into snapshots and reusable skill packs, and can continue a new chat from the latest conversation snapshot. Use when asked to slim, externalize, token-optimize, restructure a SKILL.md, summarize a long conversation, or continue from a saved conversation snapshot; do not use for simple wording compression.
 trigger:
@@ -8,6 +9,11 @@ trigger:
   - 帮我总结这个长对话
   - 快速导入已总结长对话
   - 继续讨论 <问题>
+i18n:
+  en: README.en.md
+  zh: README.md
+locale: zh-CN
+locales: [zh-CN, en-US]
 ---
 
 # Skill Architect

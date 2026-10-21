@@ -1,4 +1,6 @@
 # Skill Architect（公开版）
+**[English](./README.en.md) | [中文](./README.md)**
+
 
 把过大的 `SKILL.md` 从“整本常驻”改成“目录 + 路由索引 + 按需读取技能包”的结构化瘦身技能。
 

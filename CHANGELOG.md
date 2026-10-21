@@ -1,3 +1,10 @@
+# Changelog
+
+
+## 0.3.4 (2026-10-21)
+- 三平台对齐（cross-platform + i18n overseas）：README.en.md、`--lang en|zh` 主入口、i18n.py、CFI 三平台 workflow 全绿。
+- 不改变业务算法/中文模板；平台专用调整只改发布副本。
+
 # 变更记录
 
 ## 0.3.3 - 2026-10-19

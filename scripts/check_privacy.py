@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 """Scan a release directory for common privacy risks."""
 
+
+try:
+    import os as _boot_os, sys as _boot_sys
+    _boot_sys.path.insert(0, _boot_os.path.dirname(_boot_os.path.abspath(__file__)))
+    import pyboot as _boot_pyboot
+    _boot_pyboot.ensure_utf8_io()
+except Exception:
+    pass
+
+
+
 import argparse
 import re
 from pathlib import Path

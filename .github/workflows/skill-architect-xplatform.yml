@@ -1,0 +1,36 @@
+name: skill-architect cross-platform CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cross-platform:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      PYTHONIOENCODING: utf-8
+      PYTHONUTF8: "1"
+    steps:
+      - name: self_test（自包含）
+        run: python scripts/self_test.py
+
+      - name: Windows 中文 JSON 输出验证
+        if: runner.os == 'Windows'
+        shell: bash
+        run: python scripts/smoke_utf8_json.py
+      - name: i18n 英文 smoke（--lang en JSON 可读）
+        run: python scripts/smoke_utf8_json.py --lang en

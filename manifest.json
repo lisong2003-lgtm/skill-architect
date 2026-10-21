@@ -1,25 +1,68 @@
 {
   "name": "skill-architect",
-  "version": "0.3.3",
-  "description": "SKILL.md 架构重构、长对话快照迁移和跨 Agent 传输。",
+  "version": "0.3.4",
   "author": "lis",
   "license": "CC-BY-NC-SA-4.0",
   "entry": "SKILL.md",
   "scripts": [
+    "scripts/audit.cmd",
     "scripts/audit.py",
+    "scripts/audit.sh",
     "scripts/backup.py",
-    "scripts/extract.py",
     "scripts/build_index.py",
-    "scripts/validate.py",
-    "scripts/rollback.py",
-    "scripts/self_test.py",
-    "scripts/conversation_architect.py",
     "scripts/check_privacy.py",
+    "scripts/conversation_architect.py",
     "scripts/estimate_tokens.py",
+    "scripts/export_conversation_handoff.py",
+    "scripts/extract.cmd",
+    "scripts/extract.py",
+    "scripts/extract.sh",
     "scripts/find_conversation_handoff.py",
     "scripts/import_conversation_handoff.py",
-    "scripts/export_conversation_handoff.py"
+    "scripts/lint_cross_platform.py",
+    "scripts/pyboot.py",
+    "scripts/i18n.py",
+    "scripts/rollback.py",
+    "scripts/self_test.py",
+    "scripts/smoke_utf8_json.py",
+    "scripts/validate.cmd",
+    "scripts/validate.py",
+    "scripts/validate.sh"
   ],
-  "test": "python3 scripts/self_test.py",
-  "privacy": "No original books, private logs, personal data, or private absolute paths are bundled; run scripts/check_privacy.py before release."
+  "references": [
+    ".gitignore",
+    "CHANGELOG.md",
+    "LICENSE",
+    "PRODUCT.md",
+    "README.md",
+    "USAGE.md",
+    "agents/openai.yaml",
+    "references/瘦身最佳实践.md",
+    "references/触发优先级与故障排查.md",
+    "references/跨用户传输最佳实践.md",
+    "references/长对话归纳最佳实践.md",
+    "README.en.md"
+  ],
+  "templates": [
+    "templates/conversation_config.example.json",
+    "templates/conversation_handoff_prompt.md",
+    "templates/conversation_import_prompt.md",
+    "templates/conversation_skill_template.md",
+    "templates/conversation_snapshot_template.md",
+    "templates/conversation_transcript_template.md",
+    "templates/routing_index_template.md",
+    "templates/skill_pack_template.md",
+    "templates/slim-config.example.json"
+  ],
+  "tests": [
+    "scripts/self_test.py"
+  ],
+  "privacy": "No original books, private logs, personal data, or private absolute paths are bundled; run scripts/check_privacy.py before release.",
+  "description": "SKILL.md 架构重构、长对话快照迁移和跨 Agent 传输。",
+  "platforms": [
+    "macos",
+    "windows",
+    "linux"
+  ],
+  "test": "python3 scripts/self_test.py"
 }

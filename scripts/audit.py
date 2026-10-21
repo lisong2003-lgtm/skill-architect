@@ -1,9 +1,21 @@
 #!/usr/bin/env python3
 """Audit a SKILL.md and report large sections that may be externalized."""
 
+
+try:
+    import os as _boot_os, sys as _boot_sys
+    _boot_sys.path.insert(0, _boot_os.path.dirname(_boot_os.path.abspath(__file__)))
+    import pyboot as _boot_pyboot
+    _boot_pyboot.ensure_utf8_io()
+except Exception:
+    pass
+
 import argparse
 import re
+import sys
 from pathlib import Path
+
+import i18n
 
 
 def section_stats(text):
@@ -30,11 +42,20 @@ def section_stats(text):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--skill", required=True)
-    parser.add_argument("--threshold", type=int, default=50)
-    parser.add_argument("--output", default="")
-    args = parser.parse_args()
+    raw = sys.argv[1:]
+    lang = i18n.argv_lang(raw)
+    desc = ("Audit a SKILL.md and report large sections that may be externalized."
+            if lang == "en"
+            else "审计 SKILL.md，列出可外移的大块章节建议。")
+    parser = argparse.ArgumentParser(description=desc)
+    i18n.add_lang_arg(parser, default=lang)
+    parser.add_argument("--skill", required=True,
+                        help="path to SKILL.md" if lang == "en" else "SKILL.md 路径")
+    parser.add_argument("--threshold", type=int, default=50,
+                        help="min section lines to report (default 50)" if lang == "en" else "回报阈值（行数），默认 50")
+    parser.add_argument("--output", default="",
+                        help="write the report to this file (optional)" if lang == "en" else "结果写入文件（可选）")
+    args = parser.parse_args(raw)
 
     path = Path(args.skill)
     text = path.read_text(encoding="utf-8", errors="ignore")

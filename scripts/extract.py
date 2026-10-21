@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 """Extract marked sections from SKILL.md and replace them with a short marker."""
 
+
+try:
+    import os as _boot_os, sys as _boot_sys
+    _boot_sys.path.insert(0, _boot_os.path.dirname(_boot_os.path.abspath(__file__)))
+    import pyboot as _boot_pyboot
+    _boot_pyboot.ensure_utf8_io()
+except Exception:
+    pass
+
 import argparse
 import json
 from pathlib import Path

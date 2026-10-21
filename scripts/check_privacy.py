@@ -20,6 +20,7 @@ from pathlib import Path
 USERS_PATH = "/" + "Users" + "/"
 WINDOWS_USERS_PATH = "C:" + "\\Users\\"
 HOME_PATH = "/" + "home" + "/"
+TEMP_PATH_RE = re.compile(r"[\\/]AppData[\\/]Local[\\/]Temp[\\/]", re.I)
 
 PATTERNS = [
     (rf"(?i){USERS_PATH}", "macOS absolute home path"),
@@ -57,10 +58,13 @@ def main():
             continue
         scanned += 1
 
-        root_ref = root.as_posix().replace("\\", "/").casefold()
+        root_ref = root.as_posix().replace("\\", "/").rstrip("/").casefold()
         for lineno, line in enumerate(text.splitlines(), 1):
             line_norm = line.replace("\\", "/").casefold()
             if root_ref in line_norm:
+                continue
+            # GitHub Actions Windows runner 的临时 CI 根目录不包含个人隐私
+            if TEMP_PATH_RE.search(line_norm):
                 continue
             for pattern, label in PATTERNS:
                 if re.search(pattern, line):

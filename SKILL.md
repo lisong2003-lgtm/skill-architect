@@ -1,6 +1,8 @@
 ---
 name: skill-architect
-version: 0.3.4
+slug: skill-architect
+displayName: "技能架构师 / Skill Architect"
+version: 0.3.5
 platforms: [macos, windows, linux]
 author: lis
 description: Audit and architecturally refactor a large SKILL.md by extracting bulky sections into skill packs, generating a routing index, validating tests, and enabling rollback. Also turns long conversations into snapshots and reusable skill packs, and can continue a new chat from the latest conversation snapshot. Use when asked to slim, externalize, token-optimize, restructure a SKILL.md, summarize a long conversation, or continue from a saved conversation snapshot; do not use for simple wording compression.
@@ -22,15 +24,16 @@ locales: [zh-CN, en-US]
 
 ## 六步流程
 
-1. 审计：运行 `scripts/audit.py --skill <SKILL.md>`，识别可外移的大块章节，输出行数、字符数和建议。
+1. 审计：运行 `scripts/audit.py --skill <SKILL.md> [--compare <瘦身后SKILL.md>]`，识别可外移的大块章节，输出行数、字符数和建议；带 `--compare` 时一并给常驻上下文的 token 估算前后对比（口径同 `scripts/estimate_tokens.py`，字符数 × 0.6）。
 2. 确认：把审计结果交给用户，明确列出哪些内容将外移、哪些保留；修改前必须取得用户批准。
 3. 备份：运行 `scripts/backup.py --skill <SKILL.md> --backup <备份目录>`，生成完整备份和校验值。
 4. 抽取：运行 `scripts/extract.py --skill <SKILL.md> --markers <起止标记> --output <外移文件> --replace-marker "## 已外移说明"`，把章节抽成独立文件并替换为说明。
 5. 路由：运行 `scripts/build_index.py --pack-dir <技能包目录> --index <路由索引.md> --root <项目根目录>`，让后续按需读取。
-6. 验证：运行 `scripts/validate.py --skill <SKILL.md> --index <路由索引.md> --test-prompts <test-prompts.json> --root <项目根目录>`，校验路径、结构和测试。
+6. 验证：运行 `scripts/validate.py --skill <SKILL.md> --index <路由索引.md> --test-prompts <test-prompts.json> --root <项目根目录>`，校验路径、结构和测试；需要跑自测时加 `--test-command "<命令>"`。
 
 ## 约束
 
+- `--test-command` 只接受**受信命令**：它由你（调用方）传入，不是终端输入框。命令用 `shlex` 拆成参数列表后直接 exec，**不经过 shell**——分号、管道、重定向、`$(...)` 都不会被解释，所以一条命令只能跑一个程序；`python3`/`python`/`py` 会自动换成当前解释器（Windows 常见只有 `py`）。需要多条命令请自己写成脚本再传脚本路径。
 - 永远先备份，再修改。
 - 永远保留身份、核心判断尺、协议和路由入口；只外移低频或大块内容。
 - 不把用户确认当成删除授权；每次实际修改前明确列出范围。

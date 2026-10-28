@@ -10,10 +10,10 @@ Use to slim, externalize, token-optimize or restructure a SKILL.md, summarize a 
 
 ## Quick start
 ```bash
-python3 scripts/audit.py --skill /path/SKILL.md
-python3 scripts/extract.py --skill /path/SKILL.md --config slim-config.json
+bash scripts/audit.sh --skill /path/SKILL.md
+bash scripts/extract.sh --skill /path/SKILL.md --config slim-config.json
 python3 scripts/build_index.py --pack-dir packs --index index.md --root .
-python3 scripts/validate.py --skill /path/SKILL.md --index index.md --root .
+bash scripts/validate.sh --skill /path/SKILL.md --index index.md --root .
 ```
 
 ## Install across the three platforms

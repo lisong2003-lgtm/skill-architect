@@ -329,6 +329,78 @@ def main():
         if inv_out1.read_text(encoding="utf-8") != inv_out2.read_text(encoding="utf-8"):
             raise SystemExit("INVARIANT_RE_EXTRACT_DIFF")
 
+        # 0.3.5 新增：①非 UTF-8 文件不崩（errors=replace）②--test-command 不经过 shell
+        bad_skill = root / "bad-encoding.md"
+        bad_skill.write_bytes(
+            "# Bad\n\n## Core\n- keep\n\n## Big\n- ".encode("utf-8")
+            + b"\xff\xfe bad bytes \x80\n"
+            + "\n\n## End\n- keep\n".encode("utf-8")
+        )
+        bad_out = root / "bad-extracted.md"
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPTS / "extract.py"),
+                "--skill",
+                str(bad_skill),
+                "--markers",
+                "## Big|## End",
+                "--output",
+                str(bad_out),
+            ],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise SystemExit(f"NON_UTF8_TOLERANCE_FAILED {result.stdout} {result.stderr}")
+        if not bad_out.exists() or "## Big" not in bad_out.read_text(encoding="utf-8", errors="replace"):
+            raise SystemExit("NON_UTF8_TOLERANCE_MISSING_OUTPUT")
+
+        marker = root / "should-not-exist.txt"
+        injection = f"python3 -c 'print(1)' ; touch {marker}"
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPTS / "validate.py"),
+                "--skill",
+                str(generic),
+                "--index",
+                str(root / "index.md"),
+                "--root",
+                str(root),
+                "--test-command",
+                injection,
+            ],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        # 关键断言：分号后的第二条命令没被执行（shell=False）。
+        # 第一条 print(1) 会正常成功，所以这里不看 rc，只看有没有副作用。
+        if marker.exists():
+            raise SystemExit("TEST_COMMAND_SHELL_INJECTION")
+
+        failing = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPTS / "validate.py"),
+                "--skill",
+                str(generic),
+                "--index",
+                str(root / "index.md"),
+                "--root",
+                str(root),
+                "--test-command",
+                "python3 -c 'import sys; sys.exit(7)'",
+            ],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        if failing.returncode == 0 or "test_command=FAILED" not in failing.stdout:
+            raise SystemExit("TEST_COMMAND_EXIT_CODE_NOT_HONORED")
+
         run(
             str(SCRIPTS / "check_privacy.py"),
             "--root",

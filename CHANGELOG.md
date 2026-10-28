@@ -1,6 +1,14 @@
 # Changelog
 
 
+## 0.3.5 (2026-10-28)
+
+- `validate.py`：`--test-command` 去掉 `shell=True`，改 `shlex.split` 后按参数列表直接 exec —— 分号/管道/重定向/`$(...)` 不再被解释，注入面消除；`python3`/`python`/`py` 自动替换为当前解释器（Windows 常无 `python3`）。空命令给 `test_command=INVALID` 并 rc=1。SKILL.md「约束」新增说明：`--test-command` 只接受受信命令，要多条命令请自写脚本。
+- `audit.py`：新增 `--compare <瘦身后SKILL.md>`，在六步流程第 1 步审计时就给出常驻上下文 token 估算前后对比（与 `estimate_tokens.py` 同口径）；`--skill`/`--compare` 路径不存在时打印 `SKILL_NOT_FOUND`/`COMPARE_NOT_FOUND` 并 rc=2，不再抛 traceback；读文件改 `errors="replace"`。
+- `extract.py`：读 SKILL.md 与 config 改 `errors="replace"`（GBK/混合编码不再崩，非法字节换 U+FFFD）；`--skill`/`--config` 不存在 rc=2，缺 `--markers/--output` rc=2，标记找不到 rc=3 并输出 `EXTRACT_FAILED`。
+- 新增 Windows 包装器 `scripts/audit.cmd`、`scripts/validate.cmd`、`scripts/extract.cmd`（manifest 早已列出但磁盘缺失，本次补齐）。
+- `self_test.py` 新增 3 条断言：非 UTF-8 SKILL.md 抽取不崩且输出完整、`--test-command` 注入 `; touch <marker>` 不产生副作用（已实测 shell=True 会创建、shell=False 不会）、失败退出码被正确记为 `test_command=FAILED`。
+
 ## 0.3.4 (2026-10-21)
 - 三平台对齐（cross-platform + i18n overseas）：README.en.md、`--lang en|zh` 主入口、i18n.py、CFI 三平台 workflow 全绿。
 - 不改变业务算法/中文模板；平台专用调整只改发布副本。

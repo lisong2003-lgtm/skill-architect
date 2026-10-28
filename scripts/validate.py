@@ -12,10 +12,31 @@ except Exception:
 
 import argparse
 import json
+import os
 import re
+import shlex
 import subprocess
 import sys
 from pathlib import Path
+
+# --test-command 里的这些可执行名统一换成当前解释器：
+# Windows 上常常没有 python3 命令（只有 py / python），CI 里也不保证 PATH 一致。
+_PY_ALIASES = {"python", "python3", "py"}
+
+
+def build_argv(command: str) -> list[str]:
+    """把 --test-command 解析成 argv 列表，交给 subprocess 直接 exec（不经 shell）。
+
+    用列表执行意味着 `;`、`&&`、`|`、`$(...)` 都不会被解释成命令拼接，
+    所以“用户传进来的测试命令”最多只能跑一条程序，不能被拼上第二条。
+    """
+    argv = shlex.split(command, posix=(os.name != "nt"))
+    if not argv:
+        raise ValueError("empty test command")
+    exe_head = argv[0].replace("\\", "/").rsplit("/", 1)[-1].lower()
+    if exe_head in _PY_ALIASES:
+        argv = [sys.executable] + argv[1:]
+    return argv
 
 
 def main():
@@ -60,7 +81,14 @@ def main():
             ok = False
 
     if args.test_command:
-        result = subprocess.run(args.test_command, shell=True, capture_output=True, text=True)
+        try:
+            argv = build_argv(args.test_command)
+        except ValueError as exc:
+            print(f"test_command=INVALID ({exc})")
+            print("VALIDATE_FAILED")
+            sys.exit(1)
+        # shell=False：只 exec 解析出的第一条程序，不解释管道/分号/重定向。
+        result = subprocess.run(argv, shell=False, capture_output=True, text=True)
         if result.returncode == 0:
             print("test_command=OK")
         else:

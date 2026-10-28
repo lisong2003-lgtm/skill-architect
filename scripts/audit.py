@@ -11,11 +11,13 @@ except Exception:
     pass
 
 import argparse
+import math
 import re
 import sys
 from pathlib import Path
 
 import i18n
+from estimate_tokens import stats as token_stats
 
 
 def section_stats(text):
@@ -55,10 +57,22 @@ def main():
                         help="min section lines to report (default 50)" if lang == "en" else "回报阈值（行数），默认 50")
     parser.add_argument("--output", default="",
                         help="write the report to this file (optional)" if lang == "en" else "结果写入文件（可选）")
+    parser.add_argument("--compare", default="",
+                        help="slimmed SKILL.md to compare estimated tokens against (step 1 of the six-step flow)"
+                        if lang == "en"
+                        else "瘦身后的 SKILL.md 路径：在第 1 步审计时直接给出前后 token 估算对比")
     args = parser.parse_args(raw)
 
     path = Path(args.skill)
-    text = path.read_text(encoding="utf-8", errors="ignore")
+    if not path.is_file():
+        print(f"SKILL_NOT_FOUND {path}")
+        return 2
+    compare_path = Path(args.compare) if args.compare else None
+    if compare_path is not None and not compare_path.is_file():
+        print(f"COMPARE_NOT_FOUND {compare_path}")
+        return 2
+
+    text = path.read_text(encoding="utf-8", errors="replace")
     lines, sections = section_stats(text)
     candidates = [s for s in sections if s["lines"] >= args.threshold]
 
@@ -79,12 +93,30 @@ def main():
         report.append(
             f"| {section['lines']} | {section['heading']} | {section['start']} | {section['end']} | {section['cjk']} |"
         )
+    if compare_path is not None:
+        # 与 estimate_tokens.py 同一套口径：字符数 × tokens_per_char（默认 0.6）。
+        before = token_stats(path)
+        after = token_stats(compare_path)
+        before_tokens = math.ceil(before["chars"] * 0.6)
+        after_tokens = math.ceil(after["chars"] * 0.6)
+        saved = before_tokens - after_tokens
+        percent = (saved / before_tokens * 100.0) if before_tokens else 0.0
+        report += [
+            "",
+            "## Token 估算对比（第 1 步一并给出）",
+            "",
+            f"- 原文件：{path}（{before['lines']} 行 / {before['chars']} 字符）",
+            f"- 瘦身后：{compare_path}（{after['lines']} 行 / {after['chars']} 字符）",
+            f"- 常驻上下文估算：{before_tokens} → {after_tokens} tokens，省 {saved}（{percent:.1f}%）",
+            "- 口径：字符数 × 0.6，粗估不是计费承诺；区间可用 estimate_tokens.py --tokens-per-char 0.8 复核。",
+        ]
     report_text = "\n".join(report) + "\n"
 
     if args.output:
         Path(args.output).write_text(report_text, encoding="utf-8")
     print(report_text)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

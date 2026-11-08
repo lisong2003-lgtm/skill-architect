@@ -2,10 +2,10 @@
 name: skill-architect
 slug: skill-architect
 displayName: "技能架构师 / Skill Architect"
-version: 0.3.5
+version: 0.3.6
 platforms: [macos, windows, linux]
 author: lis
-description: Audit and architecturally refactor a large SKILL.md by extracting bulky sections into skill packs, generating a routing index, validating tests, and enabling rollback. Also turns long conversations into snapshots and reusable skill packs, and can continue a new chat from the latest conversation snapshot. Use when asked to slim, externalize, token-optimize, restructure a SKILL.md, summarize a long conversation, or continue from a saved conversation snapshot; do not use for simple wording compression.
+description: 审计并重构过大的 SKILL.md：外移大块到 packs、建立路由、验证与回滚；也支持长对话快照和续接。
 trigger:
   - 帮我瘦身这个 SKILL.md
   - 帮我总结这个长对话

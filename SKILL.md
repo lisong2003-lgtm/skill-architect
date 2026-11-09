@@ -2,10 +2,10 @@
 name: skill-architect
 slug: skill-architect
 displayName: "技能架构师 / Skill Architect"
-version: 0.3.6
+version: 0.3.7
 platforms: [macos, windows, linux]
 author: lis
-description: 审计并重构过大的 SKILL.md：外移大块到 packs、建立路由、验证与回滚；也支持长对话快照和续接。
+description: "瘦身 SKILL.md：外移 packs、路由、验证回滚；不删原文。触发词：长对话快照。"
 trigger:
   - 帮我瘦身这个 SKILL.md
   - 帮我总结这个长对话
